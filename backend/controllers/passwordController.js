@@ -3,13 +3,12 @@ const nodemailer = require('nodemailer');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 
-// Configurar transporter (usa variables de entorno en producción)
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Puedes usar otro servicio
+    service: 'gmail',
     auth: {
-        user: process.env.EMAIL_USER || 'tuemail@gmail.com',
-        pass: process.env.EMAIL_PASS || 'tucontraseña'
-    }
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
 });
 
 // Solicitar recuperación
@@ -33,8 +32,8 @@ exports.requestPasswordReset = async (req, res) => {
         user.resetPasswordExpires = resetTokenExpires;
         await user.save();
         
-        // Crear enlace de recuperación
-        const resetUrl = `http://localhost:5500/frontend/pages/reset-password.html?token=${resetToken}`;
+        const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5500';
+        const resetUrl = `${baseUrl}/pages/reset-password.html?token=${resetToken}`;
         
         // Configurar email
         const mailOptions = {

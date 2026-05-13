@@ -482,5 +482,10 @@ app.delete("/api/admin/users/:id", verifyToken, async (req, res) => {
     }
 });
 
+// ==========================================
+// 🔑 RUTAS DE RECUPERACIÓN DE CONTRASEÑA
+// ==========================================
+app.use('/api/password', require('./routes/passwordRoutes'));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Servidor CAPUN corriendo en http://localhost:${PORT}`));
