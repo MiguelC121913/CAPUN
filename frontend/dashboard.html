@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAPUN - Portal Familiar</title>
+    <link rel="icon" href="assets/logo_capun.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* === ESTILOS DE ALTO CONTRASTE (DISEÑO QUE TE GUSTÓ) === */
+        body { background-color: #eef2f5; } /* Fondo gris profesional */
+
+        /* Header Oscuro/Elegante */
+        .student-header {
+            background: linear-gradient(135deg, #2c3e50, #4ca1af); /* Azul oscuro a verde agua */
+            color: white; 
+            padding: 30px; 
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 25px;
+        }
+        .student-header h2 { margin: 0; font-size: 2.2rem; letter-spacing: 1px; font-weight: 700; }
+        .student-header p { margin: 5px 0 0; opacity: 0.8; font-size: 1rem; }
+
+        /* Layout */
+        .boleta-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+        /* Tarjetas con borde definido */
+        .card-panel {
+            background: white; 
+            padding: 25px; 
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+            border: 1px solid #dcdcdc; /* Borde visible */
+            margin-bottom: 20px;
+        }
+
+        /* TABLA CON LÍNEAS VISIBLES (CONTRASTE) */
+        .grade-table { 
+            width: 100%; 
+            border-collapse: collapse; /* Une las líneas */
+            margin-top: 15px; 
+            border: 1px solid #ccc; /* Borde externo */
+        }
+        .grade-table th { 
+            background: #2c3e50; /* Encabezado oscuro */
+            color: white; 
+            padding: 12px; 
+            text-align: left; 
+            border: 1px solid #2c3e50; 
+            text-transform: uppercase; 
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        .grade-table td { 
+            padding: 12px; 
+            border: 1px solid #ccc; /* CUADRÍCULA VISIBLE */
+            color: #333; 
+            font-weight: 600;
+        }
+        /* Filas alternas (Zebra) para leer mejor */
+        .grade-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .grade-table tr:hover { background-color: #e8f4fd; }
+
+        /* Badges Sólidos */
+        .badge { padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; min-width: 45px; display: inline-block; text-align: center; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .badge-E { background: #27ae60; }  
+        .badge-MB { background: #2980b9; } 
+        .badge-B { background: #f39c12; }  
+        .badge-R { background: #c0392b; }  
+        .badge-Help { background: #7f8c8d; } /* Gris oscuro para asterisco */
+
+        /* Controles */
+        .month-control { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .month-select { padding: 8px 15px; border-radius: 5px; border: 2px solid #2c3e50; font-weight: bold; color: #333; cursor: pointer; }
+
+        /* Stats y Extras */
+        .stat-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; }
+        .stat-item:last-child { border-bottom: none; }
+        .stat-val { font-size: 1.2rem; font-weight: 800; }
+        
+        .btn-help { display: block; width: 100%; text-align: center; background: #25D366; color: white; padding: 12px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-help:hover { background: #128C7E; transform: translateY(-2px); }
+
+        /* Ajuste Logo Navbar */
+        .navbar .logo img { height: 45px; width: 45px; object-fit: cover; border-radius: 50%; border: 2px solid #eef2f5; }
+
+        @media (max-width: 800px) { .boleta-layout { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar"> 
+        <div class="logo">
+            
+            <h1 style="color: #4a90e2; font-size: 1.5rem; margin-left: 10px;">CAPUN</h1>
+        </div>
+        <div class="nav-links">
+            <a href="#" onclick="cerrarSesion(event)" style="color: #555; font-weight:600;"><i class="fas fa-sign-out-alt"></i> Salir</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        
+        <div class="student-header">
+            <div>
+                <h2 id="student-name"><i class="fas fa-circle-notch fa-spin"></i> Cargando...</h2>
+                <p>Boleta de Habilidades y Progreso Escolar</p>
+            </div>
+        </div>
+
+        <div class="boleta-layout">
+            
+            <div class="card-panel">
+                <div class="month-control">
+                    <h3 style="color:#2c3e50; margin:0;"><i class="fas fa-file-alt"></i> Calificaciones</h3>
+                    <select id="month-selector" class="month-select" onchange="renderBoleta()">
+                        <option value="ago">Agosto</option><option value="sept">Septiembre</option><option value="oct">Octubre</option>
+                        <option value="nov">Noviembre</option><option value="dic">Diciembre</option><option value="ene">Enero</option>
+                        <option value="feb">Febrero</option><option value="mar">Marzo</option><option value="abr">Abril</option>
+                        <option value="may">Mayo</option><option value="jun">Junio</option>
+                    </select>
+                </div>
+
+                <table class="grade-table">
+                    <thead><tr><th>Asignatura</th><th style="text-align: right;">Evaluación</th></tr></thead>
+                    <tbody id="grades-body"></tbody>
+                </table>
+                
+                <div style="margin-top: 20px; text-align: center; font-size: 0.85rem; color: #555; background: #fff; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                    <strong style="color:#27ae60">E:</strong> Excelente | 
+                    <strong style="color:#2980b9">MB:</strong> Muy Bien | 
+                    <strong style="color:#f39c12">B:</strong> Bien | 
+                    <strong style="color:#c0392b">R:</strong> Regular | 
+                    <strong style="color:#7f8c8d">*:</strong> Con Ayuda
+                </div>
+            </div>
+
+            <div>
+                <div class="card-panel">
+                    <h4 style="margin-top:0; color:#555; border-bottom:2px solid #eee; padding-bottom:10px;">Asistencia Mensual</h4>
+                    <div class="stat-item"><span>Asistencias</span> <strong id="disp-asistencias" style="color:#27ae60">0</strong></div>
+                    <div class="stat-item"><span>Faltas</span> <strong id="disp-faltas" style="color:#c0392b">0</strong></div>
+                    <div class="stat-item"><span>Retardos</span> <strong id="disp-retardos" style="color:#2980b9">0</strong></div>
+                </div>
+
+                <div class="card-panel">
+                    <h4 style="margin-top:0; color:#555; border-bottom:2px solid #eee; padding-bottom:10px;">Logros</h4>
+                    <ul id="achievements-list" style="padding:0; margin:0;"><li style="color:#999; list-style:none;">Cargando...</li></ul>
+                </div>
+
+                <div class="card-panel" style="background: #e3f2fd; border-color: #90caf9;">
+                    <h4 style="margin-top:0; color:#1565c0;">¿Necesitas Ayuda?</h4>
+                    <p style="font-size:0.9rem; margin-bottom:5px;"><strong>Capacidades Únicas A.C.</strong><br>Cananea #25-B Col. Olivares</p>
+                    <a href="https://wa.me/526621089019" target="_blank" class="btn-help"><i class="fab fa-whatsapp"></i> Contactar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://capun-api.onrender.com/api'; 
+        let globalData = null;
+        const subjectsList = ["Funciones Cognitivas y Ejecutivas", "Desarrollo de Independencia", "Lenguaje", "Matemáticas", "Psicomotricidad", "Habilidades Sociales", "Lectura y Escritura", "Arte", "Educación Física", "Música"];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const mapMes = {0:"ene",1:"feb",2:"mar",3:"abr",4:"may",5:"jun",6:"jul",7:"ago",8:"sept",9:"oct",10:"nov",11:"dic"};
+            const mesKey = mapMes[new Date().getMonth()];
+            const defaultMonth = (mesKey === 'jul' || mesKey === 'ago') ? 'ago' : mesKey;
+            
+            const selector = document.getElementById('month-selector');
+            if(selector.querySelector(`option[value="${defaultMonth}"]`)) selector.value = defaultMonth; else selector.value = 'ago';
+            
+            cargarDatos();
+        });
+
+        async function cargarDatos() {
+            const token = localStorage.getItem('token');
+            if (!token) { window.location.href = 'login.html'; return; }
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const studentId = urlParams.get('studentId');
+            let endpoint = '/my-child-data';
+            if (studentId) endpoint += `?studentId=${studentId}`;
+
+            try {
+                const res = await fetch(`${API_URL}${endpoint}`, { headers: { 'Authorization': token } });
+                if (!res.ok) throw new Error("Error");
+                const data = await res.json();
+                globalData = data; 
+                
+                // Nombre sin Estatus
+                document.getElementById('student-name').innerText = data.name;
+
+                const ul = document.getElementById('achievements-list');
+                ul.innerHTML = '';
+                if(data.achievements && data.achievements.length > 0) {
+                    data.achievements.slice().reverse().forEach(logro => {
+                        ul.innerHTML += `<li style="background:#fff8e1; padding:8px; margin-bottom:5px; border-left:4px solid #f1c40f; list-style:none;">${logro.title}</li>`;
+                    });
+                } else { ul.innerHTML = '<li style="color:#999; list-style:none;">Sin logros.</li>'; }
+                
+                renderBoleta();
+            } catch (error) { document.getElementById('student-name').innerText = "Error de conexión"; }
+        }
+
+        function renderBoleta() {
+            if (!globalData) return;
+            const month = document.getElementById('month-selector').value;
+            const boleta = globalData.boleta || {};
+            const grades = (boleta.grades && boleta.grades[month]) ? boleta.grades[month] : {};
+            const stats = (boleta.attendanceStats && boleta.attendanceStats[month]) ? boleta.attendanceStats[month] : {};
+            const tbody = document.getElementById('grades-body');
+            tbody.innerHTML = '';
+            
+            subjectsList.forEach(materia => {
+                const nota = grades[materia];
+                let badgeClass = 'badge-Help'; 
+                if(nota === 'E') badgeClass = 'badge-E';
+                if(nota === 'MB') badgeClass = 'badge-MB';
+                if(nota === 'B') badgeClass = 'badge-B';
+                if(nota === 'R') badgeClass = 'badge-R';
+                // Renderizado con asterisco si aplica
+                tbody.innerHTML += `<tr class="grade-row"><td>${materia}</td><td style="text-align: right;">${nota ? `<span class="badge ${badgeClass}">${nota}</span>` : '<span style="color:#ccc;">-</span>'}</td></tr>`;
+            });
+            document.getElementById('disp-asistencias').innerText = stats.asistencias || 0;
+            document.getElementById('disp-faltas').innerText = stats.inasistencias || 0;
+            document.getElementById('disp-retardos').innerText = stats.retardos || 0;
+        }
+        function cerrarSesion(event) { if(event) event.preventDefault(); localStorage.clear(); window.location.href = 'pages/login.html'; }
+    </script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAPUN - Panel Administrador</title>
+     <link rel="icon" href="../assets/logo_capun.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos Admin */
+        .admin-grid { display: grid; grid-template-columns: 250px 1fr; gap: 20px; }
+        .sidebar { background: white; padding: 20px; border-radius: 10px; height: fit-content; min-height: 500px; }
+        .content-area { background: white; padding: 30px; border-radius: 10px; min-height: 500px; }
+        .menu-btn { width: 100%; text-align: left; padding: 15px; border: none; background: none; cursor: pointer; font-size: 1rem; color: #555; border-radius: 8px; margin-bottom: 5px; transition: 0.2s; }
+        .menu-btn:hover { background: #f0f2f5; }
+        .menu-btn.active { background: #2c3e50; color: white; font-weight: bold; }
+        .menu-btn i { margin-right: 10px; width: 25px; text-align: center; }
+        
+        /* Tabla Usuarios */
+        .user-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .user-table th, .user-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .user-table th { background-color: #f8f9fa; color: #2c3e50; }
+        .role-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .role-admin { background: #000; color: #f1c40f; border: 1px solid #f1c40f; }
+        .role-teacher { background: #3498db; color: white; }
+        .role-parent { background: #2ecc71; color: white; }
+
+        /* Botones Acción */
+        .btn-icon { border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; margin-right: 5px; transition:0.2s;}
+        .btn-delete-user { background: #e74c3c; color: white; }
+        .btn-delete-user:hover { transform: scale(1.1); }
+        
+        /* Panel Académico / Boleta */
+        .student-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; }
+        .student-item:hover { background: #f0f9ff; color: #4a90e2; }
+        .boleta-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #f8f9fa; padding: 15px; border-radius: 10px; }
+        .month-selector { padding: 8px; border-radius: 5px; border: 1px solid #ddd; font-weight: bold; color: #2c3e50; }
+        
+        .boleta-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .boleta-table th, .boleta-table td { padding: 10px; border: 1px solid #eee; text-align: left; }
+        .boleta-table th { background: #4a90e2; color: white; }
+        .grade-select { width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ddd; text-align: center; font-weight: bold; }
+        
+        .attendance-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; background: #fff3e0; padding: 15px; border-radius: 8px; }
+        .stat-box label { display: block; font-size: 0.8rem; font-weight: bold; color: #e67e22; }
+        .stat-box input { width: 100%; padding: 5px; border: 1px solid #f39c12; border-radius: 5px; text-align: center; }
+
+        .btn-save { background: #2ecc71; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; transition: 0.3s;}
+        .btn-save:hover { background: #27ae60; }
+        .btn-action { background: #4a90e2; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; }
+        .form-control { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 5px;}
+        .legend { font-size: 0.8rem; color: #7f8c8d; margin-top: 5px; font-style: italic; }
+    </style>
+</head>
+<body>
+    <nav class="navbar" style="background: #1a252f;"> 
+        <div class="logo">
+            <h1 style="color: white;"><i class="fas fa-user-shield"></i> CAPUN Admin</h1>
+        </div>
+        <div class="nav-links">
+            <span style="color: #bdc3c7; margin-right: 15px; font-size: 0.9rem;">Modo Administrador</span>
+            <a href="#" onclick="cerrarSesion()" style="color: white;">Salir</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="admin-grid">
+            <div class="sidebar">
+                <button class="menu-btn active" onclick="verSeccion('usuarios')" id="btn-usuarios"><i class="fas fa-users-cog"></i> Gestión de Cuentas</button>
+                <button class="menu-btn" onclick="verSeccion('maestro')" id="btn-maestro"><i class="fas fa-chalkboard-teacher"></i> Panel Académico</button>
+            </div>
+
+            <div class="content-area">
+                <div id="seccion-usuarios">
+                    <h2 style="color: #2c3e50;">Control de Usuarios</h2>
+                    
+                    <div style="background: #f0f9ff; padding: 20px; border-radius: 10px; border: 1px solid #b3e5fc; margin: 20px 0;">
+                        <h4 style="color: #0288d1; margin-bottom: 15px;"><i class="fas fa-user-plus"></i> Registrar Nuevo Usuario</h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-weight: bold; margin-right: 10px;">Tipo de cuenta:</label>
+                            <input type="radio" name="roleType" value="teacher" checked onclick="toggleChildInput(false)"> Maestro
+                            <input type="radio" name="roleType" value="parent" style="margin-left: 15px;" onclick="toggleChildInput(true)"> Padre de Familia
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end;">
+                            <div><label style="font-size:0.8rem; font-weight:bold;">Nombre Usuario</label><input type="text" id="txt-nombre" class="form-control" placeholder="Ej: Sr. Juan"></div>
+                            <div id="child-input-group" style="display: none;">
+                                <label style="font-size:0.8rem; font-weight:bold;">Nombre Alumno</label>
+                                <input type="text" id="txt-alumno" class="form-control" placeholder="Ej: Pepito">
+                            </div>
+                            <div><label style="font-size:0.8rem; font-weight:bold;">Correo</label><input type="email" id="txt-email" class="form-control" placeholder="correo@capun.com"></div>
+                            <div><label style="font-size:0.8rem; font-weight:bold;">Contraseña</label><input type="text" id="txt-pass" class="form-control" placeholder="******"></div>
+                            <button onclick="crearUsuario()" class="btn-action" style="background: #0288d1; height: 38px;"><i class="fas fa-plus"></i> Crear</button>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 30px; color: #555;">Base de Datos de Usuarios</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="user-table">
+                            <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th style="text-align: right;">Acciones</th></tr></thead>
+                            <tbody id="users-table-body"><tr><td colspan="4">Cargando...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="seccion-maestro" style="display: none;">
+                    <div style="display: grid; grid-template-columns: 250px 1fr; gap: 20px;">
+                        
+                        <div style="border-right: 1px solid #eee; padding-right: 15px;">
+                            <h4>Alumnos</h4>
+                            <div id="students-container">Cargando...</div>
+                        </div>
+
+                        <div id="editor-panel" style="display: none;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                                <h3 id="edit-student-name" style="color:#2c3e50;">Alumno</h3>
+                                </div>
+                            
+                            <div class="boleta-header">
+                                <label>📅 Editando Boleta de:</label>
+                                <select id="select-month" class="month-selector" onchange="cargarBoletaDelMes()">
+                                    <option value="ago">Agosto</option><option value="sept">Septiembre</option><option value="oct">Octubre</option>
+                                    <option value="nov">Noviembre</option><option value="dic">Diciembre</option><option value="ene">Enero</option>
+                                    <option value="feb">Febrero</option><option value="mar">Marzo</option><option value="abr">Abril</option>
+                                    <option value="may">Mayo</option><option value="jun">Junio</option>
+                                </select>
+                            </div>
+
+                            <table class="boleta-table">
+                                <thead><tr><th>Asignatura</th><th width="120">Calif.</th></tr></thead>
+                                <tbody id="grades-body"></tbody>
+                            </table>
+                            <div class="legend">E: Excelente | MB: Muy Bien | B: Bien | R: Regular | *: Con Ayuda</div>
+
+                            <h4 style="color:#e67e22; margin-top:20px; margin-bottom:10px;">Resumen Asistencia</h4>
+                            <div class="attendance-grid">
+                                <div class="stat-box"><label>Asistencias</label><input type="number" id="stat-asistencias" value="0"></div>
+                                <div class="stat-box"><label>Inasistencias</label><input type="number" id="stat-inasistencias" value="0"></div>
+                                <div class="stat-box"><label>Justificadas</label><input type="number" id="stat-justificadas" value="0"></div>
+                                <div class="stat-box"><label>Retardos</label><input type="number" id="stat-retardos" value="0"></div>
+                            </div>
+
+                            <button onclick="guardarBoleta()" class="btn-save"><i class="fas fa-save"></i> GUARDAR BOLETA</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://capun-api.onrender.com/api'; 
+        let currentStudentId = null;
+        let currentStudentData = null;
+
+        const subjectsList = [
+            "Funciones Cognitivas y Ejecutivas", "Desarrollo de Independencia", "Lenguaje",
+            "Matemáticas", "Psicomotricidad", "Habilidades Sociales",
+            "Lectura y Escritura", "Arte", "Educación Física", "Música"
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            if(!token || role !== 'admin') { alert("Acceso denegado."); window.location.href = 'login.html'; return; }
+            cargarUsuarios(); cargarAlumnos();
+        });
+
+        function verSeccion(id) {
+            document.getElementById('seccion-usuarios').style.display = 'none';
+            document.getElementById('seccion-maestro').style.display = 'none';
+            document.getElementById('btn-usuarios').className = 'menu-btn';
+            document.getElementById('btn-maestro').className = 'menu-btn';
+            document.getElementById(`seccion-${id}`).style.display = 'block';
+            document.getElementById(`btn-${id}`).className = 'menu-btn active';
+        }
+
+        function toggleChildInput(show) {
+            const input = document.getElementById('child-input-group');
+            if(show) { input.style.display = 'block'; input.parentElement.style.gridTemplateColumns = "1fr 1fr 1fr 1fr auto"; } 
+            else { input.style.display = 'none'; input.parentElement.style.gridTemplateColumns = "1fr 1fr 1fr auto"; }
+        }
+
+       async function cargarUsuarios() {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/admin/users`, { headers: { 'Authorization': token } });
+    const users = await res.json();
+    const tbody = document.getElementById('users-table-body');
+    tbody.innerHTML = '';
+    const myPayload = JSON.parse(atob(token.split('.')[1]));
+    const myId = myPayload.id;
+
+    users.forEach(u => {
+        let badgeClass = 'role-parent'; let roleLabel = 'Padre';
+        if(u.role === 'admin') { badgeClass = 'role-admin'; roleLabel = 'ADMIN'; }
+        if(u.role === 'teacher') { badgeClass = 'role-teacher'; roleLabel = 'Maestro'; }
+        
+        const mostrarAcciones = (u._id !== myId); // No te puedes borrar ni resetear a ti mismo
+        const nombreMostrar = (u.name && u.name !== 'undefined') ? u.name : '<span style="color:red; font-style:italic;">(Sin nombre)</span>';
+
+        // AQUÍ AGREGAMOS EL BOTÓN DE "RESET" (btn-reset)
+        const botones = mostrarAcciones ? `
+            <button class="btn-icon btn-reset" onclick="resetPassword('${u._id}', '${u.name}')" title="Cambiar Contraseña"><i class="fas fa-key"></i></button>
+            <button class="btn-icon btn-delete-user" onclick="borrarUsuario('${u._id}', '${u.name}')" title="Eliminar Usuario"><i class="fas fa-trash-alt"></i></button>
+        ` : '';
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${nombreMostrar} <br> ${u.childName ? `<small style="color:gray">${u.childName}</small>` : ''}</td>
+                <td>${u.email}</td>
+                <td><span class="role-badge ${badgeClass}">${roleLabel}</span></td>
+                <td style="text-align: right;">${botones}</td>
+            </tr>`;
+    });
+}
+
+        // FUNCIÓN DE LIMPIEZA
+        function limpiarFormularioUsuarios() {
+            document.getElementById('txt-nombre').value = "";
+            document.getElementById('txt-email').value = "";
+            document.getElementById('txt-pass').value = "";
+            const inputAlumno = document.getElementById('txt-alumno');
+            if(inputAlumno) inputAlumno.value = "";
+        }
+
+        async function crearUsuario() {
+            const role = document.querySelector('input[name="roleType"]:checked').value;
+            const name = document.getElementById('txt-nombre').value.trim(); 
+            const email = document.getElementById('txt-email').value.trim();
+            const password = document.getElementById('txt-pass').value.trim();
+            let childName = "";
+            if (role === 'parent') { childName = document.getElementById('txt-alumno').value.trim(); if(!childName) return alert("Falta nombre alumno"); }
+            if(!name || !email || !password) return alert("Faltan datos");
+            
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_URL}/admin/users`, { 
+                method: 'POST', 
+                headers: { 'Authorization': token, 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ name, email, password, role, childName }) 
+            });
+
+            if(res.ok) { 
+                alert("✅ Usuario creado"); 
+                limpiarFormularioUsuarios(); // Llamada a la limpieza tras éxito
+                cargarUsuarios(); 
+                cargarAlumnos(); 
+            } else {
+                alert("❌ Error al crear usuario");
+            }
+        }
+
+
+        async function resetPassword(id, nombre) {
+    const newPass = prompt(`Ingresa la nueva contraseña para ${nombre}:`);
+    
+    // Si el usuario cancela o lo deja vacío, no hacemos nada
+    if (newPass === null || newPass.trim() === "") return;
+    
+    if (newPass.length < 6) {
+        return alert("❌ La contraseña debe tener al menos 6 caracteres.");
+    }
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_URL}/admin/users/${id}/reset-password`, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ newPassword: newPass })
+        });
+
+        if (res.ok) {
+            alert(`✅ Contraseña actualizada correctamente para ${nombre}`);
+        } else {
+            const data = await res.json();
+            alert("❌ Error: " + data.error);
+        }
+    } catch (error) {
+        console.error(error);
+        alert("❌ Error de conexión");
+    }
+}
+        async function borrarUsuario(id, nombre) {
+            if(!confirm(`¿Eliminar a ${nombre}?`)) return;
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_URL}/admin/users/${id}`, { method: 'DELETE', headers: { 'Authorization': token } });
+            if(res.ok) { cargarUsuarios(); cargarAlumnos(); }
+        }
+
+        // --- ACADÉMICO / BOLETA ---
+        async function cargarAlumnos() {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_URL}/teacher/students`, { headers: { 'Authorization': token } });
+            const students = await res.json();
+            const container = document.getElementById('students-container');
+            container.innerHTML = '';
+            
+            students.forEach(st => {
+                if(!st || !st.name || st.name === 'undefined') return; 
+                
+                const div = document.createElement('div');
+                div.className = 'student-item';
+                div.innerHTML = `<b>${st.name}</b> <i class="fas fa-chevron-right"></i>`;
+                div.onclick = () => seleccionarAlumno(st);
+                container.appendChild(div);
+            });
+        }
+
+        function seleccionarAlumno(st) {
+            currentStudentId = st._id;
+            currentStudentData = st;
+            document.getElementById('editor-panel').style.display = 'block';
+            document.getElementById('edit-student-name').innerText = st.name;
+            
+            const tbody = document.getElementById('grades-body');
+            tbody.innerHTML = '';
+            subjectsList.forEach(subject => {
+                tbody.innerHTML += `<tr><td>${subject}</td><td><select class="grade-select" data-subject="${subject}"><option value="">-</option><option value="E">E</option><option value="MB">MB</option><option value="B">B</option><option value="R">R</option><option value="*">*</option></select></td></tr>`;
+            });
+            cargarBoletaDelMes();
+        }
+
+        function cargarBoletaDelMes() {
+            if(!currentStudentData) return;
+            const month = document.getElementById('select-month').value;
+            const boleta = currentStudentData.boleta || {};
+            const grades = (boleta.grades && boleta.grades[month]) ? boleta.grades[month] : {};
+            const stats = (boleta.attendanceStats && boleta.attendanceStats[month]) ? boleta.attendanceStats[month] : {};
+
+            document.querySelectorAll('.grade-select').forEach(sel => {
+                sel.value = grades[sel.getAttribute('data-subject')] || "";
+            });
+            document.getElementById('stat-asistencias').value = stats.asistencias || 0;
+            document.getElementById('stat-inasistencias').value = stats.inasistencias || 0;
+            document.getElementById('stat-justificadas').value = stats.justificadas || 0;
+            document.getElementById('stat-retardos').value = stats.retardos || 0;
+        }
+
+        async function guardarBoleta() {
+            if(!currentStudentId) return;
+            const month = document.getElementById('select-month').value;
+            const token = localStorage.getItem('token');
+            const gradesObj = {};
+            document.querySelectorAll('.grade-select').forEach(sel => { if(sel.value) gradesObj[sel.getAttribute('data-subject')] = sel.value; });
+            const statsObj = {
+                asistencias: document.getElementById('stat-asistencias').value,
+                inasistencias: document.getElementById('stat-inasistencias').value,
+                justificadas: document.getElementById('stat-justificadas').value,
+                retardos: document.getElementById('stat-retardos').value
+            };
+            const res = await fetch(`${API_URL}/teacher/students/${currentStudentId}/boleta`, {
+                method: 'PUT', headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ month, grades: gradesObj, attendanceStats: statsObj })
+            });
+            if(res.ok) { 
+                alert("✅ Boleta guardada"); 
+                const data = await res.json(); currentStudentData = data.student; 
+            }
+        }
+
+        function cerrarSesion() { localStorage.clear(); window.location.href = 'login.html'; }
+    </script>
+</body>
+</html>

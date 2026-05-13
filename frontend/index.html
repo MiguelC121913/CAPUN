@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAPUN - Centro de Atención Psicopedagógica</title>
+    <link rel="icon" href="assets/logo_capun.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar glass-nav">
+        <div class="logo">
+            <img src="assets/logo_capun.jpg" alt="CAPUN" onerror="this.src='assets/15.jpg'">
+            <h1>CAPUN</h1>
+        </div>
+        <div class="nav-links">
+            <a href="#inicio">Inicio</a>
+            <a href="#nosotros">Nosotros</a>
+            <a href="#galeria">Galería</a>
+            <a href="#contacto">Contacto</a>
+            <a href="pages/login.html" class="btn-login-nav">
+                <i class="fas fa-lock"></i> Portal Escolar
+            </a>
+        </div>
+    </nav>
+
+    <header class="hero-parallax" id="inicio" style="background-image: url('assets/1.jpg');">
+        <div class="overlay"></div>
+        <div class="hero-content fade-in">
+            <h1>Bienvenidos a CAPUN</h1>
+            <p>Donde cada paso cuenta y cada logro se celebra.</p>
+            <div class="hero-btns">
+                <a href="#nosotros" class="btn-outline">Conocenos</a>
+                <a href="pages/login.html" class="btn-filled">Ingresar al Portal Escolar</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="section-container" id="nosotros">
+        <div class="about-grid">
+            <div class="about-text">
+                <h2>Nuestra Misión</h2>
+                <p>Brindar atención psicopedagógica integral, fomentando el desarrollo cognitivo, emocional y social de nuestros alumnos en un ambiente seguro y estimulante.</p>
+                
+                <div class="feature-box">
+                    <i class="fas fa-heart"></i>
+                    <div>
+                        <strong>Educación con Amor</strong>
+                        <small>Personal altamente capacitado y empático.</small>
+                    </div>
+                </div>
+                <div class="feature-box">
+                    <i class="fas fa-star"></i>
+                    <div>
+                        <strong>Excelencia Académica</strong>
+                        <small>Programas adaptados a cada necesidad.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="about-images">
+                <img src="assets/2.jpg" class="img-main" alt="Escuela">
+                <img src="assets/3.jpg" class="img-small" alt="Alumnos">
+            </div>
+        </div>
+    </section>
+
+    <section class="section-container bg-light" id="galeria">
+      
+    <div class="section-header-flex"> <h2>Nuestras Instalaciones</h2>
+        <div class="linea-naranja"></div> <p spellcheck="false">Un espacio diseñado para el aprendizaje y la diversión.</p>
+    </div>
+
+    <div class="gallery-grid">
+        </div>
+
+        <div class="gallery-grid">
+            <div class="gallery-item"><img src="assets/4.jpg" alt="Foto 4"></div>
+            <div class="gallery-item"><img src="assets/5.jpg" alt="Foto 5"></div>
+            <div class="gallery-item"><img src="assets/6.jpg" alt="Foto 6"></div>
+            <div class="gallery-item"><img src="assets/7.jpg" alt="Foto 7"></div>
+            <div class="gallery-item"><img src="assets/8.jpg" alt="Foto 8"></div>
+            <div class="gallery-item"><img src="assets/9.jpg" alt="Foto 9"></div>
+        </div>
+    </section>
+
+    <section class="cta-banner" style="background-image: url('assets/10.jpg');">
+        <div class="cta-content">
+            <h2>"La educación es el arma más poderosa para cambiar el mundo"</h2>
+            <a href="#contacto" class="btn-filled white-btn">Contáctanos Hoy</a>
+        </div>
+    </section>
+
+    <footer id="contacto">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>CAPUN</h3>
+                <p>Centro de Atención Psicopedagógica</p>
+                <br>
+                <p><i class="fas fa-map-marker-alt"></i> C.P. 83180, Hermosillo, Sonora</p>
+                <p><i class="fas fa-phone"></i> +52 (662) 108-9019</p>
+                <p><i class="fas fa-envelope"></i> capun.ac@gmail.com</p>
+            </div>
+            <div class="footer-img">
+                <img src="assets/11.jpg" alt="Footer Decor">
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 CAPUN. Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <script>
+        // Efecto Navbar al hacer scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if(window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+    </script>
+</body>
+</html>
