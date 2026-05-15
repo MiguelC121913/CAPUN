@@ -1,3 +1,5 @@
+> 🌐 **Read this in:** [English](./README.en.md) · **Español**
+
 <div align="center">
 
 # CAPUN — Plataforma Web de Seguimiento Escolar
@@ -48,7 +50,11 @@ Esta plataforma digitaliza completamente la gestión de expedientes escolares de
 
 | Login | Dashboard Padres | Panel Admin |
 |---|---|---|
-| ![Login](./docs/img/login.png) | ![Dashboard Padres](./docs/img/dashboard-padres.png) | ![Dashboard Admin](./docs/img/dashboard-admin.png) |
+| ![Login](./docs/img/login.jpg) | ![Dashboard Padres](./docs/img/dashboard-padres.jpg) | ![Dashboard Admin](./docs/img/dashboard-admin.jpg) |
+
+| Panel Maestro |
+|---|
+| ![Panel Maestro](./docs/img/panel-maestro.jpg) |
 
 ---
 
@@ -149,8 +155,7 @@ CAPUN/                          ← Raíz del monorepo
 │
 ├── backend/                    ← API REST (Render)
 │   ├── controllers/
-│   │   ├── passwordController.js   ← Lógica de recuperación de contraseña
-│   │   └── progressController.js   ← Lógica de progreso y estadísticas
+│   │   └── passwordController.js   ← Lógica de recuperación de contraseña
 │   ├── middleware/
 │   │   └── auth.js             ← Verificación de tokens JWT
 │   ├── models/
@@ -160,9 +165,7 @@ CAPUN/                          ← Raíz del monorepo
 │   │   └── Event.js            ← Modelo de eventos/avisos
 │   ├── routes/
 │   │   ├── auth.js             ← Rutas de autenticación extendida
-│   │   ├── childRoutes.js      ← Rutas de gestión de alumnos
-│   │   ├── passwordRoutes.js   ← Rutas de recuperación de contraseña
-│   │   └── progressRoutes.js   ← Rutas de progreso académico
+│   │   └── passwordRoutes.js   ← Rutas de recuperación de contraseña
 │   ├── server.js               ← Punto de entrada principal
 │   ├── .env.example            ← Plantilla de variables de entorno
 │   └── package.json
